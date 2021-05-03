@@ -1,0 +1,31 @@
+{
+  "name": "eniyibotcular",
+  "version": "0.0.1",
+  "description": "lukisofistklabot",
+  "main": "lukisofistkal.js",
+  "scripts": {
+    "start": "node lukisofistkal.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "discord.js": "^12.2.0",
+    "ms": "^2.1.2",
+    "fs": "^0.0.2",
+    "request": "^2.88.2",
+    "quick.db": "^7.1.2",
+    "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/hello-express"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}
