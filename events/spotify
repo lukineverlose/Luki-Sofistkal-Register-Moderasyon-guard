@@ -1,0 +1,24 @@
+const settings = require("../ayarlar.json");
+const { MessageEmbed } = require("discord.js");
+const client = global.client;
+let sended = false;
+
+
+module.exports = async (message) => {
+
+if (!message.guild) return;
+if (!message.activity) return;
+
+if (!message.member.hasPermission(8) && !client.Taglar.Tag.some(qwe => message.author.tag.includes(qwe))) {
+
+if (message.activity.partyID.startsWith("spotify:")) {
+message.delete({ timeout: 5000 });
+message.channel.send("Spotify parti davetleri sunucumuzda engellenmiştir.").then(qwe => qwe.delete({ timeout: 5000 }));
+}
+}
+
+};
+
+module.exports.conf = {
+  name: "message",
+};
