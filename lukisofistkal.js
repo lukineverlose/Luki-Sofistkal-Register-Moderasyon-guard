@@ -1,7 +1,6 @@
 const discord = require('discord.js');
 const fs = require('fs');
 const http = require('http');
-const db = require('quick.db');
 const moment = require('moment')
 const express = require('express');
 const ayarlar = require('./ayarlar.json');
@@ -10,12 +9,13 @@ app.get("/", (request, response) => {
 response.sendStatus(200);
 });
 app.listen(process.env.PORT);
+const client = new discord.Client();          
+require('./util/eventLoader.js')(client);     
 
 
 //READY.JS
 
 const Discord = require('discord.js');
-const client = new Discord.Client();
 client.on('ready', async () => {
    client.appInfo = await client.fetchApplication();
   setInterval( async () => {
@@ -23,7 +23,7 @@ client.on('ready', async () => {
   }, 600);
   
  client.user.setActivity(`LUKİ <3 SOFİSTİKAL`, { type:'WATCHING' })
-  
+  client.login(ayarlar.meme)
   console.log("bot aktif diledigin gibi kullanabilirsin bebeğim")
 });
 
@@ -35,79 +35,20 @@ require('./util/eventLoader.js')(client);
 //ridiy cıson son kısmı
 
 //komut algılama kısmı şeysi
-
-client.commands = new Discord.Collection();
-client.aliases = new Discord.Collection();
-fs.readdir('./lukisofistkal/', (err, files) => {
-    if (err) console.error(err);
-    log(`${files.length} komut yüklenecek.`);
-    files.forEach(f => {
-        let props = require(`./lukisofistkal/${f}`);
-        log(`Yüklenen komut: ${props.help.name}.`);
-        client.commands.set(props.help.name, props);
-        props.conf.aliases.forEach(alias => {
-            client.aliases.set(alias, props.help.name);
-        });
+client.commands = new Discord.Collection(); 
+client.aliases = new Discord.Collection();  
+fs.readdir('./Lukisofistkal/', (err, files) => { 
+  if (err) console.error(err);               
+  console.log(`${files.length} Komut Yüklenecek.`);
+  files.forEach(f => {                       
+    let props = require(`./Lukisofistkal/${f}`);   
+    console.log(`${props.config.name} Komutu Yüklendi.`);  
+    client.commands.set(props.config.name, props); 
+    props.config.aliases.forEach(alias => {          
+      client.aliases.set(alias, props.config.name);  
     });
-});
-
-
-
-
-client.reload = command => {
-    return new Promise((resolve, reject) => {
-        try {
-            delete require.cache[require.resolve(`./lukisofistkal/${command}`)];
-            let cmd = require(`./lukisofistkal/${command}`);
-            client.commands.delete(command);
-            client.aliases.forEach((cmd, alias) => {
-                if (cmd === command) client.aliases.delete(alias);
-            });
-            client.commands.set(command, cmd);
-            cmd.conf.aliases.forEach(alias => {
-                client.aliases.set(alias, cmd.help.name);
-            });
-            resolve();
-        } catch (e) {
-           reject(e);
-        }
-    });
-};
-
-client.load = command => {
-    return new Promise((resolve, reject) => {
-        try {
-            let cmd = require(`./lukisofistkal/${command}`);
-            client.commands.set(command, cmd);
-            cmd.conf.aliases.forEach(alias => {
-                client.aliases.set(alias, cmd.help.name);
-            });
-            resolve();
-        } catch (e) {
-            reject(e);
-        }
-    });
-};
-
-
-
-
-client.unload = command => {
-    return new Promise((resolve, reject) => {
-        try {
-            delete require.cache[require.resolve(`./lukisofistkal/${command}`)];
-            let cmd = require(`./lukisofistkal/${command}`);
-            client.commands.delete(command);
-            client.aliases.forEach((cmd, alias) => {
-                if (cmd === command) client.aliases.delete(alias);
-            });
-            resolve();
-        } catch (e) {
-            reject(e);
-        }
-    });
-};
-
+  });
+})
 //KOMUT ALGILAYICI SON
 
 client.elevation = message => {
@@ -160,17 +101,6 @@ client.on('message', async (msg, member, guild) => {
 
 
 //--------------------çette atılan mesajlara emoji tepki koyma şeysi---------//
-client.on("message", async message => {
-
-    let cetemoji = "atılacak çet id si";
-    let cetemojiid = "sadece emoji id si"; // önrke olarak 353498634609 gibi . yani a<:3464364.> gibi değil 
-    
-    if (!message.guild) return;
-    if (message.cetemoji.id == cetemoji) {
-    message.react(cetemojiid);
-    return;
-    }
-    })
 
 
     //-------------------hoşgeldin mesajı kısmı zubab -----------///
@@ -255,8 +185,9 @@ client.on("message", async message => {
           });
 
           
+          client.on("message", async message => {
           if (!message.author.bot && message.channel.id === ayarlar.generalChat) {
-
+         
 let qwe = 0;
 
 let yavsamaSozleri = [
@@ -305,7 +236,7 @@ message.reply(yavsamaSozleri.random())
 }
 
 client.on("guildMemberAdd", async qwe => {
-  let yasakliTag = await db.get(`yasakliTag`)
+  let yasakliTag = await db.get(`yasakliTag`) || [];
   let logKanalID = ayarlar.tagLog;
   let yasakliTagRolID = ayarlar.JailRol;
   
@@ -336,12 +267,7 @@ client.on("guildMemberAdd", async qwe => {
 
   'use strict';
 
-const { Client, MessageEmbed } = require("discord.js");
-const client = new Client({
-  ignoreDirect: true,
-  ignoreRoles: true,
-  ignoreEveryone: true
-});
+
 client.setMaxListeners(50);
 const request = require("request");
 
@@ -405,7 +331,7 @@ client.on("guildUpdate", async (oldGuild, newGuild) => {
           });
         } else { };
       } else if (oldGuild.name !== newGuild.name) {
-        if (!dokunma.includes(id)) {
+        if (!güvenlimownır.includes(id)) {
         newGuild.setName(oldGuild.name);
         uye.ban({reason: "luki  guards"});
         let channel = client.channels.cache.get(client.log);
@@ -434,6 +360,7 @@ process.on("uncaughtExpection", function (err) {
 
 
 
-client.login(ayarlar.meme)
 
 
+          })
+          client.login(ayarlar.meme)
